@@ -1,0 +1,44 @@
+
+
+{% define "content" %}
+
+    <!-- Static navbar -->
+    <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">Shruti</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="#">Settings</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#">About</a></li>
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div><!--/.container-fluid -->
+    </nav>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="well">
+                <a class="btn btn-primary" href="#" role="button">Refresh</a>
+                <a class="btn btn-info" href="#" role="button">Pause</a>
+                <a class="btn btn-danger" href="#" role="button">Mute</a>
+            </div>
+        </div>
+    </div> <!-- /row -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="well">
+                <ul id="notifications">
+                    <li ng-repeat="p in mc.providers">{{p.display_name}}</li>
+                </ul>
+            </div>
+        </div>
+    </div> <!-- /row -->
+
+{% end %}
+
