@@ -23,7 +23,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="well">
-                <a class="btn btn-primary" href="#" role="button">Refresh</a>
+                <a ng-click="getNotifications()" class="btn btn-primary" href="#" role="button">Refresh</a>
                 <a class="btn btn-info" href="#" role="button">Pause</a>
                 <a class="btn btn-danger" href="#" role="button">Mute</a>
             </div>
@@ -32,13 +32,38 @@
 
     <div class="row">
         <div class="col-md-12">
+            <p>{{status}}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
             <div class="well">
-                <ul id="notifications">
-                    <li ng-repeat="p in mc.providers">{{p.display_name}}</li>
+                <ul id="providers">
+                    <li ng-repeat="p in providers">{{p.display_name}}</li>
                 </ul>
             </div>
         </div>
     </div> <!-- /row -->
 
+    <div class="row">
+        <div class="col-md-12">
+            <div class="well">
+                <ul id="settings">
+                    <li ng-repeat="s in settings">{{s}}</li>
+                </ul>
+            </div>
+        </div>
+    </div> <!-- /row -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="well">
+                <ul id="notifications">
+                    <li ng-repeat="(id,n) in notifications">{{n.title}}</li>
+                </ul>
+            </div>
+        </div>
+    </div> <!-- /row -->
 {% end %}
 
