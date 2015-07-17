@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 )
 
+var ApiUrl string
+
 // Serves the homepage with the question form
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := template.New("base.html").Delims("{%", "%}").ParseFiles("./templates/base.html", "./templates/index.html")
@@ -17,7 +19,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	t.Execute(w, nil)
+	context := struct{ ApiUrl string }{ApiUrl}
+	t.Execute(w, context)
 }
 
 // Serves the /assets/ directory for js, html, css assets
@@ -34,7 +37,9 @@ func audioHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, filepath.Join("./audiofiles", static))
 }
 
-func StartHTTPServer(host string, port string) error {
+func StartHTTPServer(host, port, apiUrl string) error {
+	ApiUrl = apiUrl
+
 	r := mux.NewRouter()
 	r.StrictSlash(true)
 
