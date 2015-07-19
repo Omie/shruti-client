@@ -24,9 +24,8 @@
         <div class="col-md-12">
             <div class="well">
                 <a ng-click="getNotifications()" class="btn btn-primary" href="#" role="button">Refresh</a>
-                <a class="btn btn-info" href="#" role="button">Pause</a>
+               <span class="audio-container"><audio id="audio" autoplay controls src="" type="audio/ogg"></audio></span>
                 <a ng-click="next()" class="btn btn-info" href="#" role="button">Next</a>
-                <a class="btn btn-danger" href="#" role="button">Mute</a>
             </div>
         </div>
     </div> <!-- /row -->
@@ -37,40 +36,16 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <p><audio id="audio" autoplay controls src="" type="audio/ogg"></audio></p>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="well">
-                <ul id="providers">
-                    <li ng-repeat="p in providers">{{p.display_name}}</li>
-                </ul>
-            </div>
-        </div>
-    </div> <!-- /row -->
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="well">
-                <ul id="settings">
-                    <li ng-repeat="s in settings">{{s}}</li>
-                </ul>
-            </div>
-        </div>
-    </div> <!-- /row -->
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="well">
-                <ul id="notifications">
-                    <li ng-repeat="(id,n) in notifications">{{n.title}}</li>
-                </ul>
-            </div>
-        </div>
+    <div class="row-fluid row-centered">
+        <div class="notification-wrapper col-centered" ng-repeat="(id,n) in notifications" randomcolor >
+            <div class="notification">
+                <div class="title heard-{{n.heard}}">
+                    <a href="{{n.url}}">{{n.title}}</a>
+                </div>
+                <!-- <span class="pro-thumb"><img src="https://news.ycombinator.com/favicon.ico"></span> -->
+                <span class="pro-thumb"><img src="http://pcij.org/wp-content/uploads/2015/01/Twitter-icon-250x250.png"></span>
+            </div> <!-- /notification -->
+        </div> <!-- /notification-wrapper -->
     </div> <!-- /row -->
 
 {% end %}

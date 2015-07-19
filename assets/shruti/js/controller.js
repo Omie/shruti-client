@@ -2,6 +2,9 @@
 
 var defaultSettings = { "since":  Math.floor(Date.now() / 1000) };
 
+var colors = [ "#303641", "#f56954", "#00c0ef", "#0073b7", "#3c726c", "#5a3264",
+                "#ec3b83", "#00a65a", "#6c541e", "#6f3a3a"];
+
 app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
         'notificationFactory', '$sce',
         function($scope, providerFactory, settingFactory, notificationFactory, $sce) {
@@ -35,7 +38,7 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
     document.getElementById('audio').addEventListener("ended", $scope.audioHandler);
 
     function initPlayer() {
-        setTimeout(initPlayer, 10000);
+        setTimeout(initPlayer, 5 * 60 * 1000 ); //5 minutes
         $scope.getNotifications();
     }
 
@@ -73,7 +76,8 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
     }
 
     function getSettings(key) {
-        $scope.settings = settingFactory.getSetting(key)
+        //$scope.settings = settingFactory.getSetting(key)
+        settingFactory.getSetting(key)
             .success(function (sett) {
                 $scope.settings = JSON.parse(sett["value"]);
                 initPlayer();
@@ -143,3 +147,10 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
 
 }]);
 
+app.directive('randomcolor', function () {
+    return {
+        link: function($scope, element, attrs) {
+            element.css('background-color',  colors[Math.floor(Math.random()*colors.length)] );
+        }
+    };
+});
