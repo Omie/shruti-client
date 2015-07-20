@@ -10,7 +10,7 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
         function($scope, providerFactory, settingFactory, notificationFactory, $sce) {
 
     $scope.status;
-    $scope.providers;
+    $scope.providers = {};
     $scope.settings = {};
     $scope.newSettings = {};
     $scope.notifications = {};
@@ -66,9 +66,11 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
     }
 
     function getProviders() {
-        $scope.providers = providerFactory.getProviders()
+        providerFactory.getProviders()
             .success(function (pro) {
-                $scope.providers = pro;
+                angular.forEach(pro, function(p) {
+                    $scope.providers[p.id] = p;
+                });
             })
             .error(function (error) {
                 $scope.status = 'Unable to load provider data';
@@ -118,6 +120,9 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
             .success(function (noti) {
                 angular.forEach(noti, function(n) {
                     n.heard = false;
+                    try {
+                        n.icon_url = $scope.providers[parseInt(n.provider)].icon_url;
+                    } catch(e){}
                     $scope.notifications[n.id] = n;
                     $scope.unheardNotifications[n.id] = n;
                 });
