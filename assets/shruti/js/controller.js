@@ -52,15 +52,13 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
             _noti = $scope.unheardNotifications[k];
 
             enc_title = encodeURIComponent(_noti.title);
-            console.debug("encoded title: ", enc_title);
             $scope.audioElement.attr("src", $sce.trustAsResourceUrl( "http://localhost:9575/?text=" + enc_title ));
 
             $scope.status = "playing: " + _noti.title;
 
-            $scope.notifications[k],unheard = false;
+            $scope.notifications[k].unheard = false;
 
             delete $scope.unheardNotifications[k];
-            console.debug($scope.unheardNotifications);
             break
         }
     }
@@ -122,7 +120,7 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
                     n.heard = false;
                     try {
                         n.icon_url = $scope.providers[parseInt(n.provider)].icon_url;
-                    } catch(e){}
+                    } catch(e){ console.debug(e); }
                     $scope.notifications[n.id] = n;
                     $scope.unheardNotifications[n.id] = n;
                 });

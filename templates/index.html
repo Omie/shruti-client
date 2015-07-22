@@ -37,15 +37,17 @@
     </div>
 
     <div class="row-fluid">
-        <div class="notification-wrapper col-centered" ng-repeat="(id,n) in notifications" randomcolor >
-            <div class="notification">
-                <div class="title heard-{{n.heard}}">
-                    <a href="{{n.url}}">{{n.title}}</a>
-                </div>
-                <!-- <span class="pro-thumb"><img src="https://news.ycombinator.com/favicon.ico"></span> -->
-                <span class="pro-thumb"><img src="{{n.icon_url}}"></span>
-            </div> <!-- /notification -->
-        </div> <!-- /notification-wrapper -->
+        <div class="col-md-3" ng-repeat="(id,n) in notifications">
+            <div class="notification-wrapper" randomcolor >
+                <div class="notification">
+                    <div class="title heard-{{n.heard}}">
+                        <a href="{{n.url}}">{{n.title}}</a>
+                    </div>
+                    <!-- <span class="pro-thumb"><img src="https://news.ycombinator.com/favicon.ico"></span> -->
+                    <span class="pro-thumb"><img src="{{n.icon_url}}"></span>
+                </div> <!-- /notification -->
+            </div> <!-- /notification-wrapper -->
+        </div>
     </div> <!-- /row -->
 
 {% end %}
