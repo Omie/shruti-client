@@ -1,4 +1,4 @@
-package main // import "github.com/src/shruti-client"
+package main // import "github.com/omie/shruti-client"
 
 import (
 	"log"
