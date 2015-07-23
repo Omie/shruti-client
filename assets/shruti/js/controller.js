@@ -40,6 +40,7 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
     function initApp() {
         document.getElementById('audio').addEventListener("ended", $scope.audioHandler);
         getProviders();
+        getUnheardNotifications();
         getSettings(clientId, defaultSettings);
     }
 
@@ -175,6 +176,28 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
             })
             .error(function (error) {
                 $scope.status = 'Unable to load notification data';
+            });
+    }
+
+    function getUnheardNotifications() {
+
+        notificationFactory.getUnheardNotifications()
+            .success(function (noti) {
+                angular.forEach(noti, function(n) {
+                    try {
+                        n.icon_url = $scope.providers[n.provider].icon_url;
+                    } catch(e){
+                        n.icon_url = "#";
+                    }
+                    $scope.notifications[n.id] = n;
+                });
+
+                if(!playing){
+                    playNext();
+                }
+            })
+            .error(function (error) {
+                $scope.status = 'Unable to load unheard notification data';
             });
     }
 

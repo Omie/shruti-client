@@ -52,6 +52,10 @@ app.factory('notificationFactory', ['$http', function($http) {
         return $http.get(urlBase + since);
     };
 
+    notificationFactory.getUnheardNotifications = function () {
+        return $http.get(urlBase + 'unheard/');
+    };
+
     notificationFactory.markAsHeard = function(ids) {
         //ids should be a list
         _enc_url = encodeURIComponent(JSON.stringify(ids));
