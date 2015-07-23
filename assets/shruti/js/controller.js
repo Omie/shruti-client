@@ -70,7 +70,15 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
         _noti = $scope.notifications[id];
         // encode title, to be able to use in GET request to ivona-service
         encTitle = encodeURIComponent(_noti.title);
-        voice = "Nicole";  //_noti.voice
+
+        try {
+            voice = $scope.providers[_noti.provider].voice;
+        } catch(e) {
+            voice = "Nicole";
+        }
+        if (voice == undefined) {
+            voice = "Nicole";
+        }
 
         reqUrl = "/?text=" + encTitle + "&voice=" + voice;
 
@@ -91,7 +99,7 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
         providerFactory.getProviders()
             .success(function (pro) {
                 angular.forEach(pro, function(p) {
-                    $scope.providers[p.id] = p;
+                    $scope.providers[parseInt(p.id)] = p;
                 });
             })
             .error(function (error) {
@@ -156,7 +164,7 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
             .success(function (noti) {
                 angular.forEach(noti, function(n) {
                     try {
-                        n.icon_url = $scope.providers[parseInt(n.provider)].icon_url;
+                        n.icon_url = $scope.providers[n.provider].icon_url;
                     } catch(e){
                         n.icon_url = "#";
                     }
