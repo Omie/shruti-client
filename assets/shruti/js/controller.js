@@ -14,7 +14,6 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
 
     // local dataset
     $scope.notifications = {};
-    $scope.unheardNotifications = []; //this should be a list, can maintain order then
 
     $scope.audioElement = angular.element(document.getElementById('audio'));
     $scope.audioElementDOM0 = document.getElementById('audio'); //to be able to pause playing audio
@@ -27,22 +26,12 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
     }
 
     $scope.next = function() {
-        if (playing) {
-            $scope.audioElementDOM0.pause();
-            _id_to_update = parseInt($scope.audioElement.attr("data-id"));
-            markAsHeard([_id_to_update]);
-        }
         playNext();
     }
 
     // executes after every notification is played
-    // marks current one as heard
-    // initiate playing next
     $scope.audioHandler = function(args) {
-        playing = false;
-        id_to_update = parseInt($scope.audioElement.attr("data-id"));
         playNext();
-        markAsHeard([id_to_update]);
     }
 
 
@@ -60,36 +49,39 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
     }
 
     function playNext(){
-        if( $scope.unheardNotifications.length == 0) {
-            return;
+        if (playing) {
+            $scope.audioElementDOM0.pause();
+            id_to_update = parseInt($scope.audioElement.attr("data-id"));
+            markAsHeard([id_to_update]);
+            delete $scope.notifications[id_to_update];
+            playing = false;
         }
+        for(var id in $scope.notifications) {
+            // get notification data
+            _noti = $scope.notifications[id];
+            // encode title, to be able to use in GET request to ivona-service
+            encTitle = encodeURIComponent(_noti.title);
 
-        // get ID
-        var id = $scope.unheardNotifications[0];
-        // get notification data
-        _noti = $scope.notifications[id];
-        // encode title, to be able to use in GET request to ivona-service
-        encTitle = encodeURIComponent(_noti.title);
+            try {
+                voice = $scope.providers[_noti.provider].voice;
+            } catch(e) {
+                voice = "Nicole";
+            }
+            if (voice == undefined) {
+                voice = "Nicole";
+            }
 
-        try {
-            voice = $scope.providers[_noti.provider].voice;
-        } catch(e) {
-            voice = "Nicole";
+            reqUrl = "/?text=" + encTitle + "&voice=" + voice;
+
+            // must use $sce since ivona-service is on different domain and angular wants
+            // explicit declaration of trust
+            $scope.audioElement.attr("src", $sce.trustAsResourceUrl( ivonaHost + reqUrl ));
+            $scope.audioElement.attr("data-id", id);
+
+            playing = true;
+            $scope.status = "playing: " + _noti.title;
+            break;
         }
-        if (voice == undefined) {
-            voice = "Nicole";
-        }
-
-        reqUrl = "/?text=" + encTitle + "&voice=" + voice;
-
-        // must use $sce since ivona-service is on different domain and angular wants
-        // explicit declaration of trust
-        $scope.audioElement.attr("src", $sce.trustAsResourceUrl( ivonaHost + reqUrl ));
-        $scope.audioElement.attr("data-id", id);
-
-        playing = true;
-        $scope.status = "playing: " + _noti.title;
-        $scope.unheardNotifications.splice(0, 1); //remove element from unheardNotifications
     }
 
 
@@ -146,10 +138,6 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
         notificationFactory.markAsHeard(ids)
             .success(function (heardIds) {
                 $scope.status = "Marked it heard";
-
-                for(var idx=0; idx<heardIds.length; idx++) {
-                    delete $scope.notifications[heardIds[idx]];
-                }
             })
             .error(function (error) {
                 $scope.status = 'Unable to mark it heard';
@@ -169,7 +157,6 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
                         n.icon_url = "#";
                     }
                     $scope.notifications[n.id] = n;
-                    $scope.unheardNotifications.push(n.id);
                 });
 
                 /*
