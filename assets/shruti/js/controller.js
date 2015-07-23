@@ -99,7 +99,7 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
         providerFactory.getProviders()
             .success(function (pro) {
                 angular.forEach(pro, function(p) {
-                    $scope.providers[parseInt(p.id)] = p;
+                    $scope.providers[p.id] = p;
                 });
             })
             .error(function (error) {
