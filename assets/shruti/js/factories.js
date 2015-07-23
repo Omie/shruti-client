@@ -52,6 +52,12 @@ app.factory('notificationFactory', ['$http', function($http) {
         return $http.get(urlBase + since);
     };
 
+    notificationFactory.markAsHeard = function(ids) {
+        //ids should be a list
+        _enc_url = encodeURIComponent(JSON.stringify(ids));
+        return $http.put(urlBase + 'mark-heard/' + _enc_url, {});
+    }
+
     return notificationFactory;
 }]);
 

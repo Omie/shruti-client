@@ -11,15 +11,24 @@ import (
 )
 
 var ApiUrl string
+var IvonaUrl string
+var ClientId string
+var AutoRefreshInterval int
 
-// Serves the homepage with the question form
+// Serves the single page app
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := template.New("base.html").Delims("{%", "%}").ParseFiles("./templates/base.html", "./templates/index.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	context := struct{ ApiUrl string }{ApiUrl}
+	context := struct {
+		ApiUrl              string
+		IvonaUrl            string
+		ClientId            string
+		AutoRefreshInterval int
+	}{ApiUrl, IvonaUrl, ClientId, AutoRefreshInterval}
+
 	t.Execute(w, context)
 }
 
@@ -37,8 +46,12 @@ func audioHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, filepath.Join("./audiofiles", static))
 }
 
-func StartHTTPServer(host, port, apiUrl string) error {
+func StartHTTPServer(host, port, apiUrl, ivonaUrl, clientId string,
+	refreshInterval int) error {
 	ApiUrl = apiUrl
+	IvonaUrl = ivonaUrl
+	ClientId = clientId
+	AutoRefreshInterval = refreshInterval
 
 	r := mux.NewRouter()
 	r.StrictSlash(true)
