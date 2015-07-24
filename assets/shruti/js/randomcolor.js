@@ -6,7 +6,9 @@ var colors = [ "#303641", "#f56954", "#00c0ef", "#0073b7", "#3c726c", "#5a3264",
 app.directive('randomcolor', function () {
     return {
         link: function($scope, element, attrs) {
-            element.css('background-color',  colors[Math.floor(Math.random()*colors.length)] );
+            c = colors[Math.floor(Math.random()*colors.length)] ;
+            element.css('background-color', c);
+            element.css('border-color', c);
         }
     };
 });

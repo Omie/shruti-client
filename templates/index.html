@@ -36,15 +36,17 @@
         </div>
     </div>
 
-    <div class="row-fluid">
+    <div class="row">
         <div class="col-md-3" ng-repeat="(id,n) in notifications">
-            <div class="notification-wrapper" randomcolor >
-                <div class="notification">
+            <div class="notification-wrapper">
+                <div class="notification" randomcolor>
                     <div class="title heard-{{n.heard}}">
                         <a href="{{n.url}}">{{n.title}}</a>
                     </div>
-                    <!-- <span class="pro-thumb"><img src="https://news.ycombinator.com/favicon.ico"></span> -->
-                    <span class="pro-thumb"><img src="{{n.icon_url}}"></span>
+                    <div class="noti-footer">
+                        <span class="pro-name">{{n.provider_dname}}</span>
+                        <span class="pro-thumb"><img src="{{n.icon_url}}"></span>
+                    </div>
                 </div> <!-- /notification -->
             </div> <!-- /notification-wrapper -->
         </div>

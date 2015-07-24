@@ -50,12 +50,7 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
         pusher.subscribe(pusherChannel);
         pusher.bind(pusherEvent,
             function(n) {
-                try {
-                    n.icon_url = $scope.providers[n.provider].icon_url;
-                }catch(e) {
-                    n.icon_url = "#";
-                }
-                $scope.notifications[n.id] = n;
+                addNotificationInLocalDataset(n);
                 playNext(false);
             }
         );
@@ -109,6 +104,18 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
 
 
     /* functions with callbacks that consume factories */
+
+    function addNotificationInLocalDataset(n){
+        try {
+            n.icon_url = $scope.providers[n.provider].icon_url;
+            n.provider_dname = $scope.providers[n.provider].display_name;
+        } catch(e){
+            n.icon_url = "#";
+            n.provider_dname = "";
+        }
+        console.debug(n);
+        $scope.notifications[n.id] = n;
+    }
 
     function getProviders() {
         providerFactory.getProviders()
@@ -183,12 +190,7 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
         notificationFactory.getNotifications(since)
             .success(function (noti) {
                 angular.forEach(noti, function(n) {
-                    try {
-                        n.icon_url = $scope.providers[n.provider].icon_url;
-                    } catch(e){
-                        n.icon_url = "#";
-                    }
-                    $scope.notifications[n.id] = n;
+                    addNotificationInLocalDataset(n);
                 });
 
                 /*
@@ -213,14 +215,8 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
         notificationFactory.getUnheardNotifications()
             .success(function (noti) {
                 angular.forEach(noti, function(n) {
-                    try {
-                        n.icon_url = $scope.providers[n.provider].icon_url;
-                    } catch(e){
-                        n.icon_url = "#";
-                    }
-                    $scope.notifications[n.id] = n;
+                    addNotificationInLocalDataset(n);
                 });
-
                 playNext(false);
             })
             .error(function (error) {
