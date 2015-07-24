@@ -62,7 +62,9 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
     }
 
     function autoRefreshNotifications(timeout) {
-        setTimeout(autoRefreshNotifications, timeout);
+        setTimeout(function(){
+            autoRefreshNotifications(timeout);
+        }, timeout);
         $scope.getNotifications();
     }
 
