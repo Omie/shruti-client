@@ -49,7 +49,7 @@ app.factory('notificationFactory', ['$http', function($http) {
     var notificationFactory = {};
 
     notificationFactory.getNotifications = function (since) {
-        return $http.get(urlBase + since);
+        return $http.get(urlBase + 'since/'+ since);
     };
 
     notificationFactory.getUnheardNotifications = function () {

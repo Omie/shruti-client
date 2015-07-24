@@ -53,7 +53,15 @@ func main() {
 	}
 	refreshInterval = refreshInterval * MILLISECONDS_IN_MINUTE
 
-	err = StartHTTPServer(host, port, apiUrl, ivonaUrl, clientId, refreshInterval)
+	pusherAPIKey := os.Getenv("SHRUTI_PUSHER_API_KEY")
+	pusherChannel := os.Getenv("SHRUTI_PUSHER_CHANNEL")
+	pusherEvent := os.Getenv("SHRUTI_PUSHER_EVENT")
+	if pusherAPIKey == "" {
+		log.Println("main: pusher API key not set, push notification support won't be available")
+	}
+
+	err = StartHTTPServer(host, port, apiUrl, ivonaUrl, clientId,
+		pusherAPIKey, pusherChannel, pusherEvent, refreshInterval)
 	if err != nil {
 		log.Println("Error starting server", err)
 	}

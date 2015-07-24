@@ -1,3 +1,3 @@
 
-var app = angular.module('shruti', []);
+var app = angular.module('shruti', ['pusher-angular']);
 

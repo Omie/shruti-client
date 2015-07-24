@@ -3,8 +3,9 @@
 var defaultSettings = { "since":  Math.floor(Date.now() / 1000), autoRefreshInterval : autoRefreshInterval };
 
 app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
-        'notificationFactory', '$sce',
-        function($scope, providerFactory, settingFactory, notificationFactory, $sce) {
+        'notificationFactory', '$sce', '$pusher',
+        function($scope, providerFactory, settingFactory, notificationFactory, $sce,
+                $pusher) {
 
     $scope.status;
     $scope.providers = {};
@@ -26,14 +27,13 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
     }
 
     $scope.next = function() {
-        playNext();
+        playNext(true);
     }
 
     // executes after every notification is played
     $scope.audioHandler = function(args) {
-        playNext();
+        playNext(true);
     }
-
 
     /* sort of private functions */
 
@@ -44,18 +44,38 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
         getSettings(clientId, defaultSettings);
     }
 
+    function initPusher() {
+        var client = new Pusher(pusherAPIKey);
+        var pusher = $pusher(client);
+        pusher.subscribe(pusherChannel);
+        pusher.bind(pusherEvent,
+            function(n) {
+                try {
+                    n.icon_url = $scope.providers[n.provider].icon_url;
+                }catch(e) {
+                    n.icon_url = "#";
+                }
+                $scope.notifications[n.id] = n;
+                playNext(false);
+            }
+        );
+    }
+
     function autoRefreshNotifications(timeout) {
         setTimeout(autoRefreshNotifications, timeout);
         $scope.getNotifications();
     }
 
-    function playNext(){
-        if (playing) {
+    function playNext(force){
+        if (playing && force) {
             $scope.audioElementDOM0.pause();
             id_to_update = parseInt($scope.audioElement.attr("data-id"));
             markAsHeard([id_to_update]);
             delete $scope.notifications[id_to_update];
             playing = false;
+        }
+        if (playing) {
+            return
         }
         for(var id in $scope.notifications) {
             // get notification data
@@ -104,13 +124,22 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
         settingFactory.getSetting(key)
             .success(function (sett) {
                 $scope.settings = JSON.parse(sett["value"]);
-                autoRefreshNotifications($scope.settings.autoRefreshInterval);
+
+                if(!pusherAPIKey) {
+                    autoRefreshNotifications($scope.settings.autoRefreshInterval);
+                } else {
+                    initPusher();
+                }
             })
             .error(function (error) {
                 $scope.status = 'Unable to load settings data, reset to default';
                 $scope.settings = defSet;
                 createSetting(clientId, defSet);
-                autoRefreshNotifications(defSet.autoRefreshInterval);
+                if(!pusherAPIKey) {
+                    autoRefreshNotifications(defSet.autoRefreshInterval);
+                } else {
+                    initPusher();
+                }
             });
     }
 
@@ -170,9 +199,7 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
                 $scope.newSettings.since =  now;
                 updateSetting(clientId, $scope.newSettings);
 
-                if(!playing){
-                    playNext();
-                }
+                playNext(false);
             })
             .error(function (error) {
                 $scope.status = 'Unable to load notification data';
@@ -192,9 +219,7 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
                     $scope.notifications[n.id] = n;
                 });
 
-                if(!playing){
-                    playNext();
-                }
+                playNext(false);
             })
             .error(function (error) {
                 $scope.status = 'Unable to load unheard notification data';

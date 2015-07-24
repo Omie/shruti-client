@@ -17,7 +17,8 @@
     <link href="/assets/shruti/css/app.css" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
-
+    <script src="//js.pusher.com/2.2/pusher.min.js"></script>
+    <script src="//cdn.jsdelivr.net/angular.pusher/latest/pusher-angular.min.js"></script>
   </head>
 
   <body>
@@ -30,6 +31,14 @@
     var ivonaHost = {%.IvonaUrl%};
     var clientId = {%.ClientId%};
     var autoRefreshInterval = {%.AutoRefreshInterval%};
+
+    {% if .PusherAPIKey %}
+        var pusherAPIKey={%.PusherAPIKey%};
+        var pusherChannel ={%.PusherChannel%};
+        var pusherEvent={%.PusherEvent%};
+    {% else %}
+        var pusherAPIKey=false;
+    {%end%}
   </script>
 
   <script src="/assets/shruti/js/app.js"></script>

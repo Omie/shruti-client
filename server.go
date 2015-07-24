@@ -10,10 +10,15 @@ import (
 	"path/filepath"
 )
 
-var ApiUrl string
-var IvonaUrl string
-var ClientId string
-var AutoRefreshInterval int
+var (
+	ApiUrl              string
+	IvonaUrl            string
+	ClientId            string
+	PusherAPIKey        string
+	PusherChannel       string
+	PusherEvent         string
+	AutoRefreshInterval int
+)
 
 // Serves the single page app
 func indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -26,8 +31,19 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		ApiUrl              string
 		IvonaUrl            string
 		ClientId            string
+		PusherAPIKey        string
+		PusherChannel       string
+		PusherEvent         string
 		AutoRefreshInterval int
-	}{ApiUrl, IvonaUrl, ClientId, AutoRefreshInterval}
+	}{ApiUrl: ApiUrl,
+		IvonaUrl:            IvonaUrl,
+		ClientId:            ClientId,
+		AutoRefreshInterval: AutoRefreshInterval}
+	if PusherAPIKey != "" {
+		context.PusherAPIKey = PusherAPIKey
+		context.PusherChannel = PusherChannel
+		context.PusherEvent = PusherEvent
+	}
 
 	t.Execute(w, context)
 }
@@ -46,11 +62,16 @@ func audioHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, filepath.Join("./audiofiles", static))
 }
 
-func StartHTTPServer(host, port, apiUrl, ivonaUrl, clientId string,
+func StartHTTPServer(host, port, apiUrl, ivonaUrl, clientId,
+	pusherAPIKey, pusherChannel, pusherEvent string,
 	refreshInterval int) error {
+
 	ApiUrl = apiUrl
 	IvonaUrl = ivonaUrl
 	ClientId = clientId
+	PusherAPIKey = pusherAPIKey
+	PusherChannel = pusherChannel
+	PusherEvent = pusherEvent
 	AutoRefreshInterval = refreshInterval
 
 	r := mux.NewRouter()
