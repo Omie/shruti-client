@@ -51,16 +51,24 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
         pusher.bind(pusherEvent,
             function(n) {
                 addNotificationInLocalDataset(n);
-                playNext(false);
             }
         );
     }
 
+    // this one only fetches notifications periodically
     function autoRefreshNotifications(timeout) {
         setTimeout(function(){
             autoRefreshNotifications(timeout);
         }, timeout);
         $scope.getNotifications();
+    }
+
+    // this one only initiates the play
+    function autoPlay(timeout) {
+        setTimeout(function(){
+            autoPlay(timeout);
+        }, timeout);
+        playNext(false);
     }
 
     function playNext(force){
@@ -113,7 +121,6 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
             n.icon_url = "#";
             n.provider_dname = "";
         }
-        console.debug(n);
         $scope.notifications[n.id] = n;
     }
 
@@ -133,10 +140,10 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
         settingFactory.getSetting(key)
             .success(function (sett) {
                 $scope.settings = JSON.parse(sett["value"]);
-
-                if(!pusherAPIKey) {
-                    autoRefreshNotifications($scope.settings.autoRefreshInterval);
-                } else {
+                //start both workers
+                autoRefreshNotifications($scope.settings.autoRefreshInterval);
+                autoPlay($scope.settings.autoRefreshInterval + 9574);  // magic ;)
+                if(pusherAPIKey != false) {
                     initPusher();
                 }
             })
@@ -144,9 +151,11 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
                 $scope.status = 'Unable to load settings data, reset to default';
                 $scope.settings = defSet;
                 createSetting(clientId, defSet);
-                if(!pusherAPIKey) {
-                    autoRefreshNotifications(defSet.autoRefreshInterval);
-                } else {
+                //start both workers
+                autoRefreshNotifications(defSet.autoRefreshInterval);
+                autoPlay(defSet.autoRefreshInterval + 9574);
+
+                if(pusherAPIKey != false) {
                     initPusher();
                 }
             });
@@ -203,7 +212,6 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
                 $scope.newSettings.since =  now;
                 updateSetting(clientId, $scope.newSettings);
 
-                playNext(false);
             })
             .error(function (error) {
                 $scope.status = 'Unable to load notification data';
@@ -217,6 +225,8 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
                 angular.forEach(noti, function(n) {
                     addNotificationInLocalDataset(n);
                 });
+                //unheard are fetched only at start, so I know I should
+                //start playing them
                 playNext(false);
             })
             .error(function (error) {
