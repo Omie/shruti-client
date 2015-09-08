@@ -9,6 +9,7 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
 
     $scope.status;
     $scope.providers = {};
+    $scope.providerFilter = -1;
 
     $scope.settings = {};
     $scope.newSettings = {};
@@ -33,6 +34,10 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
     // executes after every notification is played
     $scope.audioHandler = function(args) {
         playNext(true);
+    }
+
+    $scope.setProviderFilter = function(providerId) {
+        $scope.providerFilter = providerId;
     }
 
     /* sort of private functions */

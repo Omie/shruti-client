@@ -13,4 +13,14 @@ app.directive('randomcolor', function () {
     };
 });
 
+app.directive('markasactive', function() {
+    return {
+        link: function(scope, element, attrs) {
+            element.bind('click', function() {
+                element.parent().children().removeClass('active');
+                element.addClass('active');
+            })
+        },
+    }
+});
 

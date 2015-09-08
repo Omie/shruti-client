@@ -22,35 +22,58 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div class="well">
-                <a ng-click="getNotifications()" class="btn btn-primary" href="#" role="button">Refresh</a>
-               <span class="audio-container"><audio id="audio" autoplay controls src="" type="audio/ogg"></audio></span>
-                <a ng-click="next()" class="btn btn-info" href="#" role="button">Next</a>
+
+            <div class="col-md-2">
+                <ul class="nav nav-pills nav-stacked" id="providersList">
+                  <li class="nav-header">Filter by Provider</li>
+                  <li role="presentation" class="active" markasactive>
+                    <!-- no filter -->
+                    <a ng-click="setProviderFilter(-1)" href="#">All</a>
+                  </li>
+                  <li role="presentation" ng-repeat="(id, p) in providers" markasactive>
+                    <a ng-click="setProviderFilter(id)" href="#">{{p.display_name}}</a>
+                  </li>
+                </ul>
             </div>
-        </div>
-    </div> <!-- /row -->
+            <!-- /sidebar -->
 
-    <div class="row">
-        <div class="col-md-12">
-            <p>{{status}}</p>
-        </div>
-    </div>
+            <div class="col-md-10">
 
-    <div class="row">
-        <div class="col-md-3" ng-repeat="(id,n) in notifications">
-            <div class="notification-wrapper">
-                <div class="notification" randomcolor>
-                    <div class="title heard-{{n.heard}}">
-                        <a href="{{n.url}}">{{n.title}}</a>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="well">
+                            <a ng-click="getNotifications()" class="btn btn-primary" href="#" role="button">Refresh</a>
+                           <span class="audio-container"><audio id="audio" controls src="" type="audio/ogg"></audio></span>
+                            <a ng-click="next()" class="btn btn-info" href="#" role="button">Next</a>
+                        </div>
                     </div>
-                    <div class="noti-footer">
-                        <span class="pro-name">{{n.provider_dname}}</span>
-                        <span class="pro-thumb"><img src="{{n.icon_url}}"></span>
+                </div> <!-- /row -->
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{status}}</p>
                     </div>
-                </div> <!-- /notification -->
-            </div> <!-- /notification-wrapper -->
-        </div>
-    </div> <!-- /row -->
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3" ng-repeat="(id,n) in notifications | filterById: providerFilter">
+                        <div class="notification-wrapper">
+                            <div class="notification" randomcolor>
+                                <div class="title heard-{{n.heard}}">
+                                    <a href="{{n.url}}">{{n.title}}</a>
+                                </div>
+                                <div class="noti-footer">
+                                    <span class="pro-name">{{n.provider_dname}}</span>
+                                    <span class="pro-thumb"><img src="{{n.icon_url}}"></span>
+                                </div>
+                            </div> <!-- /notification -->
+                        </div> <!-- /notification-wrapper -->
+                    </div>
+                </div> <!-- /row -->
+
+            </div>
+        </div> <!-- mother column 12 -->
+    </div> <!-- mother row -->
 
 {% end %}
 

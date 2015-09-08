@@ -1,4 +1,15 @@
+/* fixes to bootstrap */
 
+
+.nav > li.nav-header {
+    cursor: default;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+
+/* app styles */
 .audio-container {
     display: inline-block;
     vertical-align: middle;
