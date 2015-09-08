@@ -38,6 +38,7 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
 
     $scope.setProviderFilter = function(providerId) {
         $scope.providerFilter = providerId;
+        playNext(true);
     }
 
     /* sort of private functions */
@@ -90,6 +91,11 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
         for(var id in $scope.notifications) {
             // get notification data
             _noti = $scope.notifications[id];
+
+            // if filter is enabled, only play notifications from that provider
+            if ( $scope.providerFilter != -1 && _noti.provider != $scope.providerFilter) {
+                continue;
+            }
             // encode title, to be able to use in GET request to ivona-service
             encTitle = encodeURIComponent(_noti.title);
 
