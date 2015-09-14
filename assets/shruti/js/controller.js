@@ -16,6 +16,7 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
 
     // local dataset
     $scope.notifications = {};
+    $scope.selected = {};
 
     $scope.audioElement = angular.element(document.getElementById('audio'));
     $scope.audioElementDOM0 = document.getElementById('audio'); //to be able to pause playing audio
@@ -29,6 +30,13 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
 
     $scope.next = function() {
         playNext(true);
+    }
+
+    $scope.bulkMarkHeard = function() {
+        //get a list of those that are set 'true' in $scope.selected
+        var toDelete = Object.keys($scope.selected).filter(function(el){ return $scope.selected[el]; });
+        toDelete = toDelete.map(function(id){ return parseInt(id); });
+        markAsHeard(toDelete);
     }
 
     // executes after every notification is played
@@ -82,7 +90,6 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
             $scope.audioElementDOM0.pause();
             id_to_update = parseInt($scope.audioElement.attr("data-id"));
             markAsHeard([id_to_update]);
-            delete $scope.notifications[id_to_update];
             playing = false;
         }
         if (playing) {
@@ -196,6 +203,7 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
     function markAsHeard(ids) {
         notificationFactory.markAsHeard(ids)
             .success(function (heardIds) {
+                heardIds.forEach( function(element, index, array){ delete $scope.notifications[element];});
                 $scope.status = "Marked it heard";
             })
             .error(function (error) {

@@ -43,8 +43,10 @@
                     <div class="col-md-12">
                         <div class="well">
                             <a ng-click="getNotifications()" class="btn btn-primary" href="#" role="button">Refresh</a>
-                           <span class="audio-container"><audio id="audio" controls src="" type="audio/ogg"></audio></span>
+                            <span class="audio-container"><audio id="audio" controls src="" type="audio/ogg"></audio></span>
                             <a ng-click="next()" class="btn btn-info" href="#" role="button">Next</a>
+                            |
+                            <a ng-click="bulkMarkHeard()" class="btn btn-info" href="#" role="button">Mark Selected As Heard</a>
                         </div>
                     </div>
                 </div> <!-- /row -->
@@ -59,6 +61,9 @@
                     <div class="col-md-3" ng-repeat="(id,n) in notifications | filterById: providerFilter">
                         <div class="notification-wrapper">
                             <div class="notification" randomcolor>
+                                <span class="noti-checkbox-span pull-right">
+                                    <input type="checkbox" class="noti-checkbox" ng-model="selected[n.id]">
+                                </span>
                                 <div class="title heard-{{n.heard}}">
                                     <a href="{{n.url}}">{{n.title}}</a>
                                 </div>
