@@ -46,7 +46,7 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
 
     $scope.setProviderFilter = function(providerId) {
         $scope.providerFilter = providerId;
-        playNext(true);
+        switchNext();
     }
 
     /* sort of private functions */
@@ -90,11 +90,16 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
             $scope.audioElementDOM0.pause();
             id_to_update = parseInt($scope.audioElement.attr("data-id"));
             markAsHeard([id_to_update]);
+            delete $scope.notifications[id_to_update];
             playing = false;
         }
         if (playing) {
             return
         }
+        switchNext();
+    }
+
+    function switchNext() {
         for(var id in $scope.notifications) {
             // get notification data
             _noti = $scope.notifications[id];
@@ -203,7 +208,9 @@ app.controller('MainCtrl', ['$scope', 'providerFactory', 'settingFactory',
     function markAsHeard(ids) {
         notificationFactory.markAsHeard(ids)
             .success(function (heardIds) {
-                heardIds.forEach( function(element, index, array){ delete $scope.notifications[element];});
+                heardIds.forEach( function(element, index, array) { 
+                    try{ delete $scope.notifications[element];}catch(e){}
+                });
                 $scope.status = "Marked it heard";
             })
             .error(function (error) {
